@@ -1,4 +1,4 @@
-module k3s
+module github.com/dahendel/pulumi-vsphere-k3s
 
 go 1.14
 
