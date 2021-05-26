@@ -16,7 +16,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.12 // indirect
 	github.com/opentracing/basictracer-go v1.1.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
-	github.com/pulumi/pulumi-vsphere/sdk/v3 v3.1.0 // indirect
+	github.com/pulumi/pulumi-vsphere/sdk/v3 v3.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.3.0
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f // indirect
