@@ -1,7 +1,5 @@
 package k3s
 
-import "github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-
 type VMConfig struct {
 	Datacenter       *string
 	Cluster          string
@@ -21,7 +19,7 @@ type VMConfig struct {
 }
 
 type Disk struct {
-	Size            pulumi.Int
+	Size            int
 	Attach          bool
 	EagerlyScrub    bool
 	ThinProvisioned bool

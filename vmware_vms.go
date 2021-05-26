@@ -55,7 +55,7 @@ func newDiskArray(disks []Disk, namePrefix string) vsphere.VirtualMachineDiskArr
 			DatastoreId:     pulumi.StringPtr(vsphereIDs.dataStoreID),
 			EagerlyScrub:    pulumi.BoolPtr(d.EagerlyScrub),
 			Label:           pulumi.StringPtr(fmt.Sprintf("%s-disk-%d.vmdk", namePrefix, i)),
-			Size:            d.Size,
+			Size:            pulumi.IntPtr(d.Size),
 			ThinProvisioned: pulumi.BoolPtr(d.ThinProvisioned),
 			UnitNumber:      pulumi.IntPtr(i),
 		}
