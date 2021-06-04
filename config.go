@@ -1,4 +1,6 @@
-package k3s
+package main
+
+import "github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 
 type VMConfig struct {
 	Datacenter       *string
@@ -9,17 +11,18 @@ type VMConfig struct {
 	Folder           string
 	EnableDiskUuid   bool
 	Count            int
-	Name             string
+	NamePrefix       string
 	Template         string
 	NumCpus          int
 	Cores            int
 	Memory           int
 	Networks         []*Network
 	Disks            []Disk
+	name             string
 }
 
 type Disk struct {
-	Size            int
+	Size            pulumi.Int
 	Attach          bool
 	EagerlyScrub    bool
 	ThinProvisioned bool
@@ -31,4 +34,12 @@ type Network struct {
 	MacAddress  string
 	StaticMac   bool
 	networkID   string
+}
+
+type AnsibleConfig struct {
+	PrivateKey  string   `pulumi:"private_key"`
+	// Playbooks is a list of paths to playbooks to execute
+	Playbooks   []string `pulumi:"playbook"`
+	// User for ansible to use upon connection
+	AnsibleUser string   `pulumi:"ansible_user"`
 }

@@ -1,0 +1,27 @@
+config:
+  pulumi-k3s-vmware:vmConfig:
+    Disks:
+      - Size: 35
+        EagerlyScrub: false
+        ThinProvisioned: true
+      - Size: 120
+        EagerlyScrub: false
+        ThinProvisioned: true
+    Networks:
+      - AdapterType: vmxnet3
+        NetworkName: VM Network
+    Cluster: lab
+    ClusterDatastore: ds-cluster
+    Cores: 1
+    Count: 3
+    Datacenter: home
+    EnableDiskUuid: true
+    Memory: 4096
+    NamePrefix: k3s
+    NumCpus: 2
+    Template: f33-base
+  vsphere:allowUnverifiedSsl: "true"
+  vsphere:password:
+    secure: AAABAHWa/F3QkqmXUmp40i272PVmBZvYYboxgpWIeq7BbUAMsj9plKkkipVL
+  vsphere:user: administrator@vsphere.local
+  vsphere:vsphereServer: 10.10.85.17

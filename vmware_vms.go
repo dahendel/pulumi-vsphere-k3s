@@ -1,4 +1,4 @@
-package k3s
+package main
 
 import (
 	"fmt"
@@ -48,19 +48,28 @@ func newNetworkArray(nets []*Network) vsphere.VirtualMachineNetworkInterfaceArra
 	return networkArray
 }
 
-func newDiskArray(disks []Disk, namePrefix string) vsphere.VirtualMachineDiskArray {
+func newDiskArray(disk vsphere.GetVirtualMachineDisk) vsphere.VirtualMachineDiskArray {
 	var diskArray vsphere.VirtualMachineDiskArray
-	for i, d := range disks {
-		diskArgs := &vsphere.VirtualMachineDiskArgs{
-			DatastoreId:     pulumi.StringPtr(vsphereIDs.dataStoreID),
-			EagerlyScrub:    pulumi.BoolPtr(d.EagerlyScrub),
-			Label:           pulumi.StringPtr(fmt.Sprintf("%s-disk-%d.vmdk", namePrefix, i)),
-			Size:            pulumi.IntPtr(d.Size),
-			ThinProvisioned: pulumi.BoolPtr(d.ThinProvisioned),
-			UnitNumber:      pulumi.IntPtr(i),
-		}
-		diskArray = append(diskArray, diskArgs)
-	}
+
+	diskArray = append(diskArray, &vsphere.VirtualMachineDiskArgs{
+		EagerlyScrub:    pulumi.BoolPtr(disk.EagerlyScrub),
+		Label:           pulumi.StringPtr(disk.Label),
+		Size:            pulumi.IntPtr(disk.Size),
+		ThinProvisioned: pulumi.BoolPtr(disk.ThinProvisioned),
+		UnitNumber:      pulumi.IntPtr(disk.UnitNumber),
+	})
+	//for i, d := range disks[1:] {
+	//	diskArgs := &vsphere.VirtualMachineDiskArgs{
+	//		DatastoreId:     pulumi.StringPtr(vsphereIDs.dataStoreID),
+	//		EagerlyScrub:    pulumi.BoolPtr(d.EagerlyScrub),
+	//		Label:           pulumi.StringPtr(fmt.Sprintf("%s-disk-%d.vmdk", namePrefix, i+1)),
+	//		Size:            d.Size,
+	//		ControllerType:  pulumi.StringPtr("scsi"),
+	//		ThinProvisioned: pulumi.BoolPtr(d.ThinProvisioned),
+	//		UnitNumber:      pulumi.IntPtr(i+1),
+	//	}
+	//	diskArray = append(diskArray, diskArgs)
+	//}
 	return diskArray
 }
 
@@ -72,15 +81,21 @@ func newCloneArgs(templateID string) vsphere.VirtualMachineCloneArgs {
 	}
 }
 
-func setVMOptions(conf *VMConfig) *vsphere.VirtualMachineArgs {
+func setVMOptions(conf *VMConfig, tmplId *vsphere.LookupVirtualMachineResult) *vsphere.VirtualMachineArgs {
 	var diskArray vsphere.VirtualMachineDiskArray
 	var networkArray vsphere.VirtualMachineNetworkInterfaceArray
 	if conf.Disks != nil {
-		diskArray = newDiskArray(conf.Disks, conf.Name)
+		diskArray = newDiskArray(tmplId.Disks[0])
 	}
 
 	if conf.Networks != nil {
 		networkArray = newNetworkArray(conf.Networks)
+	}
+
+	clone := newCloneArgs(tmplId.Uuid)
+
+	if conf.Folder == "" {
+		conf.Folder = "/"
 	}
 
 	return &vsphere.VirtualMachineArgs{
@@ -88,16 +103,18 @@ func setVMOptions(conf *VMConfig) *vsphere.VirtualMachineArgs {
 		CpuHotAddEnabled:      pulumi.Bool(true),
 		CpuHotRemoveEnabled:   pulumi.Bool(true),
 		EnableDiskUuid:        pulumi.BoolPtr(conf.EnableDiskUuid),
+		GuestId:               pulumi.StringPtr(tmplId.GuestId),
 		Folder:                pulumi.StringPtr(conf.Folder),
 		Memory:                pulumi.IntPtr(conf.Memory),
 		MemoryHotAddEnabled:   pulumi.Bool(true),
-		Name:                  pulumi.StringPtr(conf.Name),
+		Name:                  pulumi.StringPtr(conf.name),
 		NumCoresPerSocket:     pulumi.IntPtr(conf.Cores),
 		NumCpus:               pulumi.IntPtr(conf.NumCpus),
 		SyncTimeWithHost:      pulumi.Bool(true),
 		ResourcePoolId:        pulumi.String(vsphereIDs.resourcePoolID),
 		Disks:                 diskArray,
 		NetworkInterfaces:     networkArray,
+		Clone:                 clone,
 	}
 }
 
@@ -184,38 +201,38 @@ func setResourceIDS(ctx *pulumi.Context, conf *VMConfig) error {
 	return nil
 }
 
-func buildVM(ctx *pulumi.Context, vm *VMConfig) error {
-	if err := setResourceIDS(ctx, vm); err != nil {
+func buildVMs(ctx *pulumi.Context, conf *VMConfig) error {
+	if err := setResourceIDS(ctx, conf); err != nil {
 		return err
 	}
-	var cloneArgs = &vsphere.VirtualMachineCloneArgs{}
 
-	if vm.Template != "" {
-		templateClone, err := vsphere.LookupVirtualMachine(ctx, &vsphere.LookupVirtualMachineArgs{
-			Name:         vm.Template,
+	var hosts []string
+	for i := 1; i <= conf.Count; i++ {
+		var vmName string
+		vmName = fmt.Sprintf("%s%d", conf.NamePrefix, i+1)
+		tmpl, err := vsphere.LookupVirtualMachine(ctx, &vsphere.LookupVirtualMachineArgs{
+			Name:         conf.Template,
 			DatacenterId: &vsphereIDs.dataCenterID,
 		})
 
 		if err != nil {
 			return err
 		}
-		cloneArgs.LinkedClone = pulumi.Bool(false)
-		cloneArgs.TemplateUuid = pulumi.String(templateClone.Uuid)
-	}
 
-	vmArgs := setVMOptions(vm)
-	vmResult, err := vsphere.NewVirtualMachine(ctx, vm.Name, vmArgs)
-	if err != nil {
-		return err
-	}
-
-	ctx.Export(fmt.Sprintf("%s-IP", vm.Name), vmResult.NetworkInterfaces.ApplyT(func(v *vsphere.VirtualMachineNetworkInterface) (string, error) {
-		if v == nil || v.DeviceAddress == nil {
-			return "", nil
+		conf.name = vmName
+		vmArgs := setVMOptions(conf, tmpl)
+		vm, err := vsphere.NewVirtualMachine(ctx, vmName, vmArgs)
+		if err != nil {
+			return err
 		}
-		return *v.DeviceAddress, nil
-	}).(pulumi.StringOutput))
 
+		pulumi.Any(vm.DefaultIpAddress).ApplyT(func(args interface{}) string {
+			hosts = append(hosts, args.(string))
+			return args.(string)
+		})
+		ctx.Export(vmName, vm.DefaultIpAddress)
+
+	}
+	ctx.Export("ips", pulumi.ToStringArray(hosts))
 	return nil
 }
-

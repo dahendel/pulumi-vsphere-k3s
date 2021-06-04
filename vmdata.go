@@ -1,4 +1,4 @@
-package k3s
+package main
 
 type VMS map[string]*VMExportData
 

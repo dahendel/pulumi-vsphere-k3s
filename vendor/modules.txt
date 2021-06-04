@@ -1,7 +1,20 @@
+# github.com/HdrHistogram/hdrhistogram-go v1.1.0
+## explicit
 # github.com/Microsoft/go-winio v0.5.0
 ## explicit
 github.com/Microsoft/go-winio
 github.com/Microsoft/go-winio/pkg/guid
+# github.com/apenella/go-ansible v1.1.0
+## explicit
+github.com/apenella/go-ansible/pkg/execute
+github.com/apenella/go-ansible/pkg/options
+github.com/apenella/go-ansible/pkg/playbook
+github.com/apenella/go-ansible/pkg/stdoutcallback
+github.com/apenella/go-ansible/pkg/stdoutcallback/results
+# github.com/apenella/go-common-utils v0.1.1
+github.com/apenella/go-common-utils/data
+# github.com/apenella/go-common-utils/error v0.0.0-20200917063805-34b0ed3c4ce1
+github.com/apenella/go-common-utils/error
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
 # github.com/cheggaaa/pb v1.0.29
@@ -54,7 +67,7 @@ github.com/jbenet/go-context/io
 # github.com/kevinburke/ssh_config v1.1.0
 ## explicit
 github.com/kevinburke/ssh_config
-# github.com/mattn/go-runewidth v0.0.12
+# github.com/mattn/go-runewidth v0.0.13
 ## explicit
 github.com/mattn/go-runewidth
 # github.com/mitchellh/go-homedir v1.1.0
@@ -75,7 +88,7 @@ github.com/pkg/errors
 # github.com/pulumi/pulumi-vsphere/sdk/v3 v3.1.0
 ## explicit
 github.com/pulumi/pulumi-vsphere/sdk/v3/go/vsphere
-# github.com/pulumi/pulumi/sdk/v3 v3.3.0
+# github.com/pulumi/pulumi/sdk/v3 v3.3.1
 ## explicit
 github.com/pulumi/pulumi/sdk/v3/go/common/apitype
 github.com/pulumi/pulumi/sdk/v3/go/common/diag
@@ -101,11 +114,11 @@ github.com/pulumi/pulumi/sdk/v3/go/common/util/rpcutil/rpcerror
 github.com/pulumi/pulumi/sdk/v3/go/common/version
 github.com/pulumi/pulumi/sdk/v3/go/common/workspace
 github.com/pulumi/pulumi/sdk/v3/go/pulumi
+github.com/pulumi/pulumi/sdk/v3/go/pulumi/config
 github.com/pulumi/pulumi/sdk/v3/nodejs/npm
 github.com/pulumi/pulumi/sdk/v3/proto/go
 github.com/pulumi/pulumi/sdk/v3/python
 # github.com/rivo/uniseg v0.2.0
-## explicit
 github.com/rivo/uniseg
 # github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f
 ## explicit
@@ -113,6 +126,8 @@ github.com/sabhiram/go-gitignore
 # github.com/sergi/go-diff v1.2.0
 ## explicit
 github.com/sergi/go-diff/diffmatchpatch
+# github.com/spf13/cast v1.3.1
+github.com/spf13/cast
 # github.com/spf13/cobra v1.1.3
 ## explicit
 github.com/spf13/cobra
@@ -128,7 +143,7 @@ github.com/src-d/gcfg/types
 github.com/texttheater/golang-levenshtein/levenshtein
 # github.com/tweekmonster/luser v0.0.0-20161003172636-3fa38070dbd7
 github.com/tweekmonster/luser
-# github.com/uber/jaeger-client-go v2.29.0+incompatible
+# github.com/uber/jaeger-client-go v2.29.1+incompatible
 ## explicit
 github.com/uber/jaeger-client-go
 github.com/uber/jaeger-client-go/internal/baggage
@@ -175,7 +190,7 @@ golang.org/x/crypto/ssh/agent
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
 golang.org/x/crypto/ssh/knownhosts
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20210521195947-fe42d452be8f
+# golang.org/x/net v0.0.0-20210525063256-abc453219eb5
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -186,7 +201,7 @@ golang.org/x/net/internal/socks
 golang.org/x/net/internal/timeseries
 golang.org/x/net/proxy
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20210521203332-0cec03c779c1
+# golang.org/x/sys v0.0.0-20210603125802-9665404d3644
 ## explicit
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
@@ -202,11 +217,10 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/genproto v0.0.0-20210521181308-5ccab8a35a9a
+# google.golang.org/genproto v0.0.0-20210604141403-392c879c8b08
 ## explicit
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.38.0
-## explicit
 google.golang.org/grpc
 google.golang.org/grpc/attributes
 google.golang.org/grpc/backoff
